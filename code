@@ -1,8 +1,10 @@
 import random
 import numpy
 import copy
+import time
 
-def evalution(chromos):
+#함수 정의
+def evalution(chromosome):
     evalution_value = [0 for __ in range(5)]
     
     dominant = 1
@@ -10,19 +12,20 @@ def evalution(chromos):
     for i in range(5):
         m_sum = 0
         for j in range(10):
-            if chromos[i][j] > dominant:
-                m_sum += chromos[i][j] - dominant
+            if chromosome[i][j] > dominant:
+                m_sum += chromosome[i][j] - dominant
             else:
-                m_sum += dominant - chromos[i][j]
+                m_sum += dominant - chromosome[i][j]
         evalution_value[i] = m_sum
     
     return evalution_value
 
+#--main code--
 if __name__ == '__main__':
-    chromos     = [[0 for __ in range(10)] for __ in range(5)]
-    new_chromos = copy.deepcopy(chromos)
+    chromosome = [[0 for __ in range(10)] for __ in range(5)]
+    new_chromosome = copy.deepcopy(chromosome)
 
-    mutation = 0.1
+    mutation = 0.025
     
     parent_cromo_index = [0, 0]
     generation = 0
@@ -30,7 +33,7 @@ if __name__ == '__main__':
     # 1 Generation
     for i in range(5):
         for j in range(10):
-            chromos[i][j] = random.randint(0, 9)
+            chromosome[i][j] = random.randint(0, 9)
 
     generation += 1
 
@@ -39,7 +42,7 @@ if __name__ == '__main__':
             # Force stop
             break
 
-        evalution_value = evalution(chromos)
+        evalution_value = evalution(chromosome)
         
         for i in range(2):
             parent_cromo_index[i] = numpy.argsort(evalution_value)[i]
@@ -56,18 +59,20 @@ if __name__ == '__main__':
         for i in range(5):
             for j in range(10):
                 if random.random() < mutation:
-                    new_chromos[i][j] = random.randint(0, 9)
+                    new_chromosome[i][j] = random.randint(0, 9)
                 else:
-                    new_chromos[i][j] = chromos[parent_cromo_index[random.randint(0, 1)]][j]
+                    new_chromosome[i][j] = chromosome[parent_cromo_index[random.randint(0, 1)]][j]
 
-        chromos = copy.deepcopy(new_chromos)
+        chromosome = copy.deepcopy(new_chromosome)
 
         print("=============================")
-        print(generation, "세대 : ", chromos)
+        print(generation, "세대 : ", chromosome)
         print('적합도 :', evalution_value)
         print('선택된 부모 개체 :', parent_cromo_index)
 
         generation += 1
+        time.sleep(0.01)
         
+    #최적해 출력    
     print("Done!!!")
-    print("최적해",chromos)
+    print("최적해",chromosome)
